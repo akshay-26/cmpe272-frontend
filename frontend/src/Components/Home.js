@@ -45,7 +45,9 @@ export class Home extends Component {
             }
             // imgLocation=decodeURI(imgLocation)
             console.log(imgLocation)
-            axios.post('http://localhost:5000/predict', data).then(res => {
+            // const backendURL = 'http://localhost:5000/predict'
+            const backendURL = 'http://18.217.117.89:5000/predict'
+            axios.post(backendURL, data).then(res => {
                 console.log(res)
                 this.setState({
                     isLoading: false,
