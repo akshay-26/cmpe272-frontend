@@ -45,8 +45,8 @@ export class Home extends Component {
             }
             // imgLocation=decodeURI(imgLocation)
             console.log(imgLocation)
-            // const backendURL = 'http://localhost:5000/predict'
-            const backendURL = 'http://18.217.117.89:5000/predict'
+            const backendURL = 'http://localhost:5000/predict'
+            // const backendURL = 'http://18.217.117.89:5000/predict'
             axios.post(backendURL, data).then(res => {
                 console.log(res)
                 this.setState({
@@ -106,32 +106,40 @@ export class Home extends Component {
                                     Model Prediction Result
                                 </Typography>
                                 <Typography variant="h6" color="text.secondary">
-                                    {this.state.response.data === "DRUSEN" ?
+                                    {this.state.response.data.class === "DRUSEN" ?
                                         <div>
-                                            Result: {this.state.response.data}
+                                            Result: {this.state.response.data.class}
                                             <br />
+                                            Confidence: {this.state.response.data.confidence}
+                                            <br/>
                                             <a href="https://www.aao.org/eye-health/diseases/what-are-drusen">Click here to Know More about DRUSEN</a>
                                         </div>
                                         : ""}
-                                    {this.state.response.data === "NORMAL" ?
+                                    {this.state.response.data.class === "NORMAL" ?
                                         <div>
-                                            Result: {this.state.response.data}
+                                            Result: {this.state.response.data.class}
+                                            <br />
+                                            Confidence: {this.state.response.data.confidence}
                                             <br />
                                             You're Perfectly Alright, way to goo, woohooo
                                         </div>
                                         : ""}
-                                    {this.state.response.data === "DME" ?
+                                    {this.state.response.data.class === "DME" ?
                                         <div>
-                                            Result: {this.state.response.data}
+                                            Result: {this.state.response.data.class}
                                             <br />
+                                            Confidence: {this.state.response.data.confidence}
+                                            <br/>
                                             <a href="https://eyewiki.aao.org/Diabetic_Macular_Edema">Click here to Know More about DME</a>
                                         </div>
                                         : ""}
 
-                                    {this.state.response.data === "CNV" ?
+                                    {this.state.response.data.class === "CNV" ?
                                         <div>
-                                            Result: {this.state.response.data}
+                                            Result: {this.state.response.data.class}
                                             <br />
+                                            Confidence: {this.state.response.data.confidence}
+                                            <br/>
                                             <a href="https://eyewiki.aao.org/Choroidal_Neovascularization:_OCT_Angiography_Findings">Click here to Know More about CNV</a>
                                         </div>
                                         : ""}

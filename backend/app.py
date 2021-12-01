@@ -27,9 +27,12 @@ class_dict = dict([(v,k) for k,v in class_dict_init.items()])
 UPLOAD_FOLDER = './uploads'
 
 
-def preprocess_image(path):
+def preprocess_image(path, is_png):
     img = tf.io.read_file(path)
-    img = tf.image.decode_jpeg(img, channels=3)
+    if is_png:
+        img = tf.image.decode_png(img, channels=3)
+    else:
+        img = tf.image.decode_jpeg(img, channels=3)
     img = tf.image.convert_image_dtype(img, tf.float32)
     img = tf.expand_dims(img, 0)
     img = tf.image.resize(img, [IMG_HEIGHT, IMG_WIDTH])
@@ -38,9 +41,10 @@ def preprocess_image(path):
 
 def predict(img):
     arr = model.predict(img)
+    conf = round(np.max(arr)*100, 2)
     predicted_class = class_dict[np.argmax(arr)]
-    print("Array---",arr, predicted_class)
-    return predicted_class
+    print("Array---",predicted_class, conf)
+    return predicted_class, conf
 
 
 @app.route('/upload', methods = ['POST'])
@@ -75,30 +79,36 @@ def upload_file():
         return e
     
 
-IMG_FILE_PATH = "temp.jpeg"
 
 @app.route("/predict",  methods = ['POST'])
 def get_prediction():
     # url="https://ubereats-harsha.s3.us-west-1.amazonaws.com/pathalogy/NORMAL-img.jpeg"
     # response = requests.get(url)
-    
+    is_png = False
+    IMG_FILE_PATH = "temp.jpeg"
+
     data = request.get_json(force=True)
     print("json data", data)
 
     url=data.get("url")
+    print("request ->", url)
     response = requests.get(url)
     img = Image.open(BytesIO(response.content))
+    print("\n\nType -> ", type(img), str(type(img)))
+    if(str(type(img)) == "<class 'PIL.PngImagePlugin.PngImageFile'>"):
+        IMG_FILE_PATH = "temp.png"
+        is_png=True
+
     img.save(IMG_FILE_PATH)
-    img = preprocess_image(IMG_FILE_PATH)
-    predicted_class = predict(img)
-    # img = tf.io.decode_jpeg(img)
-    # # img = tf.keras.preprocessing.image.img_to_array(img)
-    # # img = tf.image.resize(img, [IMG_HEIGHT, IMG_WIDTH, 3])
-    # print(img.shape)
-    # predicted_class = "N"# predict(img)
+    img = preprocess_image(IMG_FILE_PATH, is_png)
+    predicted_class, conf = predict(img)
+    
     output = {
         "success": True,
-        "data": predicted_class
+        "data": {
+            "class": predicted_class,
+            "confidence": conf
+        }
     }
 
     return output
