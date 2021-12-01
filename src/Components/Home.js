@@ -34,9 +34,12 @@ export class Home extends Component {
             let newname = filename.replace(/ +/g, "").trim() + new Date().valueOf() + "." + ext;
             let newFile = new File([file], newname)
             let imgLocation = await (await uploadImages(newFile)).location
+            const data = {
+                url: imgLocation
+            }
             // imgLocation=decodeURI(imgLocation)
             console.log(imgLocation)
-            axios.post('http://localhost:3001/uploads', imgLocation).then(res => {
+            axios.post('http://localhost:5000/predict', data).then(res => {
                 console.log(res)
                 this.setState({ isLoading: false })
             }).catch(err => {
