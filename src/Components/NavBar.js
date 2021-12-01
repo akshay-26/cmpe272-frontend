@@ -11,14 +11,14 @@ export class NavBar extends Component {
 
     render() {
         return (
-            <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
-                <div class="container-fluid">
-                    <a class="navbar-brand" href="#">Pathalogy Detector</a>
-                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar">
-                        <span class="navbar-toggler-icon"></span>
+            <nav className="navbar navbar-expand-sm bg-dark navbar-dark">
+                <div className="container-fluid">
+                    <a className="navbar-brand" href="#">Pathalogy Detector</a>
+                    <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar">
+                        <span className="navbar-toggler-icon"></span>
                     </button>
-                    <div class="collapse navbar-collapse" id="collapsibleNavbar">
-                        <ul class="navbar-nav">
+                    <div className="collapse navbar-collapse" id="collapsibleNavbar">
+                        {/* <ul class="navbar-nav">
                             <li class="nav-item">
                                 <a class="nav-link" href="#">Link</a>
                             </li>
@@ -28,7 +28,7 @@ export class NavBar extends Component {
                             <li class="nav-item">
                                 <a class="nav-link" href="#">Link</a>
                             </li>
-                        </ul>
+                        </ul> */}
                     </div>
                 </div>
             </nav>
