@@ -1,16 +1,19 @@
 import React, { Component } from 'react'
 import NavBar from './NavBar'
 import { uploadImages } from './S3Upload'
-import LinearProgress from '@mui/material/LinearProgress';
-import styles from './home.css'
+import { Button, Card, CardActions, CardContent, CardMedia, Typography } from '@mui/material';
 var axios = require('axios').default
 export class Home extends Component {
     constructor(props) {
         super(props)
-
+        this.inputFile = React.createRef()
         this.state = {
             file: "",
-            isLoading: false
+            isLoading: false,
+            isResultSuccess: false,
+            isResultFailed: false,
+            img: '',
+            response: ''
         }
     }
     handleFileChange = (e) => {
@@ -27,9 +30,12 @@ export class Home extends Component {
         // axios.post(url,fileData).then(res=>{
         //     console.log(res)
         // })
+        // this.inputFile.current.click()
+        // console.log(this)
         let file = this.state.file
         if (file) {
-            this.setState({ isLoading: true })
+            this.setState({ isLoading: true,
+                isResultSuccess:false })
             let [filename, ext] = file.name.split(".")
             let newname = filename.replace(/ +/g, "").trim() + new Date().valueOf() + "." + ext;
             let newFile = new File([file], newname)
@@ -41,10 +47,19 @@ export class Home extends Component {
             console.log(imgLocation)
             axios.post('http://localhost:5000/predict', data).then(res => {
                 console.log(res)
-                this.setState({ isLoading: false })
+                this.setState({
+                    isLoading: false,
+                    isResultSuccess: true,
+                    img: imgLocation,
+                    response: res.data
+                })
             }).catch(err => {
                 console.log(err)
-                this.setState({ isLoading: false })
+                this.setState({
+                    isLoading: false,
+                    isResultFailed: true,
+
+                })
             })
         }
 
@@ -55,9 +70,10 @@ export class Home extends Component {
         return (
             <React.Fragment>
                 <NavBar></NavBar>
-
-                <input type="file" className="form-control-md" onChange={this.handleFileChange} />
-                <button type="button" className="btn btn-primary" accept="image/png, image/jpeg" onClick={e => this.uploadFile()}>Upload</button>
+                {/* <Information></Information> */}
+                <input type="file" className="form-control-md" onChange={this.handleFileChange} ref={this.inputFile} />
+                <br />
+                <button type="button" className="btn btn-primary" accept="image/png, image/jpeg" onClick={e => this.uploadFile()}>Check Your result</button>
 
                 {/* <div style={{
                     position:"fixed",
@@ -71,9 +87,61 @@ export class Home extends Component {
                 }}>
                         <LinearProgress color="inherit" />
                 </div> */}
-                {/* <div class="spinner-border" role="status">
+                {this.state.isLoading ? <div className="spinner-border" role="status" >
                     <span class="visually-hidden">Loading...</span>
-                </div> */}
+                </div> : ""}
+                {this.state.isResultSuccess ?
+                    <div class="d-flex justify-content-center mt-4">
+                        <Card sx={{ maxWidth: 345 }}>
+                            <CardMedia
+                                component="img"
+                                height="140"
+                                image={this.state.img}
+                            // 
+                            />
+                            <CardContent>
+                                <Typography gutterBottom variant="h5" component="div">
+                                    Model Prediction Result
+                                </Typography>
+                                <Typography variant="h6" color="text.secondary">
+                                    {this.state.response.data === "DRUSEN" ?
+                                        <div>
+                                            Result: {this.state.response.data}
+                                            <br />
+                                            <a href="https://www.aao.org/eye-health/diseases/what-are-drusen">Click here to Know More about DRUSEN</a>
+                                        </div>
+                                        : ""}
+                                    {this.state.response.data === "NORMAL" ?
+                                        <div>
+                                            Result: {this.state.response.data}
+                                            <br />
+                                            You're Perfectly Alright, way to goo, woohooo
+                                        </div>
+                                        : ""}
+                                    {this.state.response.data === "DME" ?
+                                        <div>
+                                            Result: {this.state.response.data}
+                                            <br />
+                                            <a href="https://eyewiki.aao.org/Diabetic_Macular_Edema">Click here to Know More about DME</a>
+                                        </div>
+                                        : ""}
+
+                                    {this.state.response.data === "CNV" ?
+                                        <div>
+                                            Result: {this.state.response.data}
+                                            <br />
+                                            <a href="https://eyewiki.aao.org/Choroidal_Neovascularization:_OCT_Angiography_Findings">Click here to Know More about CNV</a>
+                                        </div>
+                                        : ""}
+                                </Typography>
+                            </CardContent>
+                            {/* <CardActions>
+                        <Button size="small">Share</Button>
+                        <Button size="small">Learn More</Button>
+                    </CardActions> */}
+                        </Card>
+                    </div>
+                    : ""}
             </React.Fragment>
         )
     }
