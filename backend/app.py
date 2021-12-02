@@ -19,7 +19,7 @@ CORS(app, resources={r"/": {"origins": "*"}})
 # app.config['CORS_HEADERS'] = 'Content-Type'
 # cors = CORS(app, resources={r"/": {"origins": "http://localhost:port"}})
 IMG_HEIGHT, IMG_WIDTH = 160, 160
-model = tf.keras.models.load_model("cmpe_272_a2_v2.h5")
+model = tf.keras.models.load_model("cmpe_272_a3_v1.h5")
 class_dict_init = {'CNV': 0, 'DME': 1, 'DRUSEN': 2, 'NORMAL': 3}
 class_dict = dict([(v,k) for k,v in class_dict_init.items()])
 
